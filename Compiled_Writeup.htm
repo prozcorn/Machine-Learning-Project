@@ -1,0 +1,125 @@
+<html>
+
+<head>
+<meta http-equiv=Content-Type content="text/html; charset=windows-1252">
+<meta name=Generator content="Microsoft Word 15 (filtered)">
+<style>
+<!--
+ /* Font Definitions */
+ @font-face
+	{font-family:Helvetica;
+	panose-1:2 11 6 4 2 2 2 2 2 4;}
+@font-face
+	{font-family:"Cambria Math";
+	panose-1:2 4 5 3 5 4 6 3 2 4;}
+@font-face
+	{font-family:Calibri;
+	panose-1:2 15 5 2 2 2 4 3 2 4;}
+@font-face
+	{font-family:inherit;
+	panose-1:0 0 0 0 0 0 0 0 0 0;}
+ /* Style Definitions */
+ p.MsoNormal, li.MsoNormal, div.MsoNormal
+	{margin-top:0in;
+	margin-right:0in;
+	margin-bottom:8.0pt;
+	margin-left:0in;
+	line-height:107%;
+	font-size:11.0pt;
+	font-family:"Calibri",sans-serif;}
+.MsoChpDefault
+	{font-family:"Calibri",sans-serif;}
+.MsoPapDefault
+	{margin-bottom:8.0pt;
+	line-height:107%;}
+@page WordSection1
+	{size:8.5in 11.0in;
+	margin:1.0in 1.0in 1.0in 1.0in;}
+div.WordSection1
+	{page:WordSection1;}
+-->
+</style>
+
+</head>
+
+<body lang=EN-US>
+
+<div class=WordSection1>
+
+<p class=MsoNormal style='margin-top:15.0pt;margin-right:0in;margin-bottom:
+7.5pt;margin-left:0in;line-height:normal;background:white'><span
+style='font-size:28.5pt;font-family:"inherit",serif;color:#333333'>Machine
+Learning Project Writeup</span></p>
+
+<p class=MsoNormal style='margin-top:7.5pt;margin-right:0in;margin-bottom:7.5pt;
+margin-left:0in;line-height:normal;background:white'><span style='font-size:
+13.5pt;font-family:"inherit",serif;color:#333333'>Matthew Prosniewski</span></p>
+
+<p class=MsoNormal style='margin-top:7.5pt;margin-right:0in;margin-bottom:7.5pt;
+margin-left:0in;line-height:normal;background:white'><span style='font-size:
+13.5pt;font-family:"inherit",serif;color:#333333'>April 27, 2019</span></p>
+
+<p class=MsoNormal style='margin-bottom:7.5pt;line-height:normal;background:
+white'><span style='font-size:10.5pt;font-family:"Helvetica",sans-serif;
+color:#333333'>In this writeup I will go through each section of the code and
+explain what it is doing and why I am doing it.</span></p>
+
+<p class=MsoNormal style='margin-bottom:7.5pt;line-height:normal;background:
+white'><span style='font-size:10.5pt;font-family:"Helvetica",sans-serif;
+color:#333333'>The first section of the file loads in the necessary libraries
+used in the file. I will be using gradient boosted trees to build my model
+therefore I am loading in the library xgboost as well as some libraries used
+for data processingn.</span></p>
+
+<p class=MsoNormal style='margin-bottom:7.5pt;line-height:normal;background:
+white'><span style='font-size:10.5pt;font-family:"Helvetica",sans-serif;
+color:#333333'>This next section loads in the training data and does some basic
+EDA. The character variables are either removed or set to be integer values
+since xgboost can’t handle character values. I removed the user name, row
+number and timestamp since they should have nothing to do with the correctness
+of the motion. I also made sure to filter out any cases that didn’t have a
+classe associated with them.</span></p>
+
+<p class=MsoNormal style='margin-bottom:7.5pt;line-height:normal;background:
+white'><span style='font-size:10.5pt;font-family:"Helvetica",sans-serif;
+color:#333333'>The next part of the code does some basic variable selection.
+Since many of the variables are mostly null values I wanted to elliminate the
+ones that won’t be split on. This is done by make 3 quick modles and selecting
+only variables that meet a certain importance threshold. The threshold was
+chosen to make the model sizes reasonable and to elliminate enough unpredictive
+variables as to avoid overiftting.</span></p>
+
+<p class=MsoNormal style='margin-bottom:7.5pt;line-height:normal;background:
+white'><span style='font-size:10.5pt;font-family:"Helvetica",sans-serif;
+color:#333333'>In these models I used xgboosts watchlist ability to see how
+large the out of sample error of the models was. To do this I randomly broke
+the training data into 70-30 train test splits before creating the models. I
+also had the models stop fitting once the test error didn’t decrease for 10
+rounds. For these modles the out of sample misclassifation error was about 0.3%
+in each case. This was expected to decrease after variable selection and
+increasing the amount of training data when doing cross validtion with 10 folds
+next.</span></p>
+
+<p class=MsoNormal style='margin-bottom:7.5pt;line-height:normal;background:
+white'><span style='font-size:10.5pt;font-family:"Helvetica",sans-serif;
+color:#333333'>The next part of the code uses the full training data with a 10
+kfold cross validation to make sure models with the selected variables won’t
+overift and to determine the correct n rounds for the final predictive model
+(model_5) which is fit afterward. The mean out of sample error for the cross
+validation after variable selection lowered to approximently .04%
+misclassifation error. This is what we expect to be the approximate
+misclassifaction error of the final model but the final models will be slightly
+higher.</span></p>
+
+<p class=MsoNormal style='margin-bottom:7.5pt;line-height:normal;background:
+white'><span style='font-size:10.5pt;font-family:"Helvetica",sans-serif;
+color:#333333'>The final part loads in the test data set and makes predictions
+on it and then converts the numeric predictions back into the character values.</span></p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+</div>
+
+</body>
+
+</html>
