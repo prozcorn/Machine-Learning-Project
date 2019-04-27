@@ -1,0 +1,29 @@
+---
+title: "Machine Learning Project Writeup"
+author: "Matthew Prosniewski"
+date: "April 27, 2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+In this writeup I will go through each section of the code 
+and explain what it is doing and why I am doing it. 
+
+The first section of the file loads in the necessary libraries used in the file. I 
+will be using gradient boosted trees to build my model therefore I am loading in 
+the library xgboost as well as some libraries used for data processingn. 
+
+This next section loads in the training data and does some basic EDA. The character variables are either removed or set to be integer values since xgboost can't handle character values.
+I removed the user name, row number and timestamp since they should have nothing to do with the correctness of the motion. I also made sure to filter out any cases that didn't have a classe associated with them. 
+
+The next part of the code does some basic variable selection. Since many of the variables are mostly null values I wanted to elliminate the ones that won't be split on. This is done by make 3 quick modles and selecting only variables that meet a certain importance threshold. The threshold was chosen to make the model sizes reasonable and to elliminate enough unpredictive variables as to avoid overiftting. 
+
+In these models I used xgboosts watchlist ability to see how large the out of sample error of the models was. To do this I randomly broke the training data into 70-30 train test splits before creating the models. I also had the models stop fitting once the test error didn't decrease for 10 rounds. For these modles the out of sample misclassifation error was about 0.3% in each case. This was expected to decrease after variable selection and increasing the amount of training data when doing cross validtion with 10 folds next. 
+
+The next part of the code uses the full training data with a 10 kfold cross validation to make sure models with the selected variables won't overift and to determine the correct n rounds for the final predictive model (model_5) which is fit afterward. The mean out of sample error for the cross validation after variable selection lowered to approximently .04% misclassifation error. This is what we expect to be the approximate misclassifaction error of the final model but the final models will be slightly higher. 
+
+The final part loads in the test data set and makes predictions on it and then converts the numeric predictions back into the character values. 
